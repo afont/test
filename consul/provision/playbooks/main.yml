@@ -1,0 +1,118 @@
+---
+
+- name: "Install Consul"
+  hosts: all
+  become: yes
+  become_method: sudo
+  gather_facts: yes
+  tags: [consul]
+  tasks:
+          - name: "Update the software package repository"
+            apt:
+              update_cache: yes
+
+          - name: "Install dependencies"
+            package:
+                    state: latest
+                    name:
+                            - curl
+                            - net-tools
+                            - unzip
+
+          - name: "Download & Install Consul"
+            unarchive:
+                    src: "https://releases.hashicorp.com/consul/1.6.2/consul_1.6.2_linux_amd64.zip"
+                    dest: "/usr/local/bin"
+                    remote_src: yes
+          - name: "Verify consul installation"
+            shell: "consul --version"
+            register: consul_version
+          - assert:
+                  that:
+                          - "'Consul' in consul_version.stdout"
+          - name: "Create consul user"
+            user:
+                    name: consul
+          - name: "Create Consul /var directory"
+            file:
+                    path: "/var/consul"
+                    state: directory
+                    owner: consul
+                    group: consul
+                    mode: 0755
+
+- name: "Configure bootstrap Consul node"
+  hosts: bootstrap
+  become: yes   
+  become_method: sudo
+  gather_facts: true
+  tags: [bootstrap]
+  tasks:
+          - name: "Create Consul bootstrap directory"
+            file:
+                    path: "/etc/consul.d/bootstrap"
+                    state: directory
+                    mode: 0755
+          - name: "Copy configuration file"
+            template:
+                    src: "../files/bootstrap-config.json.j2"
+                    dest: "/etc/consul.d/bootstrap/config.json"
+          - name: "Copy systemd bootstrap consul.service"
+            template:
+                    src: "../files/bootstrap-consul.service.j2"
+                    dest: "/etc/systemd/system/consul.service"
+          - name: "Start bootstrap Consul"
+            systemd:
+                    name: consul.service
+                    state: started
+                    
+- name: "Configure Consul Server nodes"
+  hosts: server
+  become: yes
+  become_method: sudo 
+  gather_facts: true
+  tags: [nodes]
+  tasks:
+          - name: "Create Consul server directory"
+            file:
+                    path: /etc/consul.d/server
+                    state: directory
+                    mode: 0755
+          - name: "Copy configuration file"
+            template:
+                    src: "../files/node-config.json.j2"
+                    dest: "/etc/consul.d/server/config.json"
+          - name: "Copy systemd node consul.service"
+            template: 
+                    src: "../files/node-consul.service.j2"
+                    dest: "/etc/systemd/system/consul.service"
+          - name: "Start Consul service"
+            systemd:
+                    name: consul.service
+                    state: started
+                              
+- name: "Configure Consul Client node"
+  hosts: client
+  become: yes
+  become_method: sudo
+  gather_facts: true
+  tags: [client]
+  tasks:
+          - name: "Create Consul client directory"
+            file:     
+                path: /etc/consul.d/client
+                state: directory
+                mode: 0755
+          - name: "Copy configuration file"
+            template:
+                    src: "../files/client-config.json.j2"
+                    dest: "/etc/consul.d/client/config.json"
+          - name: "Copy systemd client node consul.service"
+            template:
+                    src: "../files/client-consul.service.j2"
+                    dest: "/etc/systemd/system/consul.service"
+          - name: "Start Consul service"
+            systemd:
+                    name: consul.service
+                    state: started
+                                        

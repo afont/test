@@ -1,0 +1,28 @@
+[consul1]
+host0 ansible_host=10.0.36.50 ansible_connection=ssh ansible_user=ansible ansible_password=ansible
+
+[consul2]
+host1 ansible_host=10.0.36.51 ansible_connection=ssh ansible_user=ansible ansible_password=ansible
+
+[consul3]
+host2 ansible_host=10.0.36.52 ansible_connection=ssh ansible_user=ansible ansible_password=ansible
+
+[consul4]
+client ansible_host=10.0.36.53 ansible_connection=ssh ansible_user=ansible ansible_password=ansible
+
+
+[bootstrap:children]
+consul1
+
+[server:children]
+consul2
+consul3
+
+[client:children]
+consul4
+
+[all:children]
+bootstrap
+server
+client
+

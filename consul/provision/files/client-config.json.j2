@@ -1,0 +1,12 @@
+{
+	"bootstrap": false,
+	"server": false,
+	"datacenter": "test_datacenter",
+	"data_dir": "/var/consul",
+	"encrypt": "PfCkrq/lFPem7slKP5N2Cw==",
+	"log_level": "INFO",
+	"enable_syslog": true,
+	"leave_on_terminate": true,
+	"start_join": [{% for host in consul_servers | difference(ansible_all_ipv4_addresses) %}"{{host}}"{% if not loop.last %}, {% endif %}{% endfor %}],
+	"bind_addr": "{{ ansible_eth1.ipv4.address }}" 
+}

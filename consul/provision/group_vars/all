@@ -1,0 +1,6 @@
+---
+# file: group_vars/all
+ansible_connection: ssh
+ansible_ssh_user: vagrant
+ansible_ssh_pass: vagrant
+consul_servers: ['10.0.36.50','10.0.36.51','10.0.36.52']
