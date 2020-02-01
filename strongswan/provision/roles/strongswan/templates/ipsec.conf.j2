@@ -18,7 +18,8 @@ conn test_vpn
     leftsubnet={{ vpn_ikev2_client_route }}
     leftauth=pubkey
     leftsendcert=always
-    leftid={{ vpn_ikev2_server_common_name }}
+    #leftid={{ vpn_ikev2_server_common_name }}
+    leftid=10.0.16.50
     leftcert={{ vpn_ikev2_server_certificate_file_name }}
 
     right=%any
