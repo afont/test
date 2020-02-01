@@ -38,12 +38,12 @@ vagrant up
 vagrant provision
 ```
 > Once machine is booted up, configure your preferred VPN client, with the following parameters:
-
+```
 remote server: 10.0.16.50
 login: test_user
 password: t3st-p4ssw0rd
 CA certificate: copy from ~/test/strongswan/provision/roles/strongswan/templates/ca.pem to your computer and import it.
-
+```
 
 ### Task NGINX SSL wih HAPROXY and KEEPALIVED: (directory: test/webha) 
 
