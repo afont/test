@@ -1,6 +1,35 @@
+    type=tunnel
+    keyexchange=ikev2
+    fragmentation=yes
+    forceencaps=yes
+    dpdaction=clear
+    dpddelay=300s
+    rekey=no
+    left=%any
+    leftid=@server_domain_or_IP
+    leftcert=server-cert.pem
+    leftsendcert=always
+    leftsubnet=0.0.0.0/0
+    right=%any
+    rightid=%any
+    rightauth=eap-mschapv2
+    rightsourceip=10.10.10.0/24
+    rightdns=8.8.8.8,8.8.4.4
+    rightsendcert=never
+    eap_identity=%identity
+
+
+
+
+
+---
+
+
+
 config setup
     strictcrlpolicy=no
     uniqueids = no
+    charondebug="ike 1, knl 1, cfg 0"
 
 conn %default
     mobike=yes
@@ -10,16 +39,17 @@ conn %default
     fragmentation=yes
 
 conn test_vpn
+   type=tunnel
     auto=add
     keyexchange=ikev2
-    eap_identity=%any
-
+    eap_identity=%identity
+    compress=no
     left=%any
     leftsubnet={{ vpn_ikev2_client_route }}
     leftauth=pubkey
     leftsendcert=always
-    #leftid={{ vpn_ikev2_server_common_name }}
     leftid=10.0.16.50
+    leftsubnet=0.0.0.0/0
     leftcert={{ vpn_ikev2_server_certificate_file_name }}
 
     right=%any
@@ -28,3 +58,7 @@ conn test_vpn
     rightid=%any
     rightsendcert=never
     rightdns={{ vpn_ikev2_client_dns }}
+    forceencaps=yes
+    rekey=no
+    eap_identity=%identity
+
