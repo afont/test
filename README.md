@@ -33,7 +33,7 @@ $ vagrant provision
 > VM will boot and launch ansible playbook that configures new CA from scratch and generates keys and certificates for Nginx webservers and for Strongswan IKEv2 VPN. It also copies files to its final destinations, so no intervention is necessary to bring up later both strongswan and ngnixssl+haproxy+keepalived.
 
 
-### Task Strongswan IKEv2 (directory: test/strongswan)
+## Task Strongswan IKEv2 (directory: test/strongswan)
 ``` sh
 vagrant up
 vagrant provision
@@ -46,7 +46,7 @@ password: t3st-p4ssw0rd
 CA certificate: copy from ~/test/strongswan/provision/roles/strongswan/templates/ca.pem to your computer and import it.
 ```
 
-### Task NGINX SSL wih HAPROXY and KEEPALIVED: (directory: test/webha) 
+## Task NGINX SSL wih HAPROXY and KEEPALIVED: (directory: test/webha) 
 
 ```sh
 vagrant up
