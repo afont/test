@@ -11,7 +11,8 @@ Environment preparation:
 -Task Consul: (directory: /test/consul)
 
 1) vagrant up
-2) 
+2) vagrant provision
+3) Open a browser to https://10.0.36.50:8500 
 
 
 
