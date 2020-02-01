@@ -3,6 +3,7 @@
 
 To deploy this test task, I used Vagrant with Virtualbox VM's.
 Just follow instructions below to provision different environments.
+
 Please, let me know if something is not working and also, your feedback! :)
 
 ## Environment preparation:
