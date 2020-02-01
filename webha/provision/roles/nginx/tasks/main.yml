@@ -1,0 +1,42 @@
+---
+#Installing nginx web server server from YUM
+#- name: Install EPEL repository
+#  yum: name=epel-release state=present
+
+- name: Installing nginx web server
+  apt: name=nginx state=latest
+  notify: start nginx
+
+- name: Copying nginx.conf
+  template: src=nginx.conf.j2 dest=/etc/nginx/nginx.conf
+  notify: restart nginx
+
+- name: Copying Nginx sites file
+  template: src=default.j2 dest=/etc/nginx/sites-enabled/default
+  notify: restart nginx
+
+- name: Copying certificate signed by our CA
+  template: src={{ inventory_hostname }}.crt.j2 dest=/etc/ssl/certs/{{ inventory_hostname }}.crt
+  notify: restart nginx
+
+- name: Copying key for webserver
+  template: src={{ inventory_hostname }}.key.j2 dest=/etc/ssl/certs/{{ inventory_hostname }}.key
+  notify: restart nginx
+
+- name: Copying Nginx SSL params
+  template: src=ssl-params.conf.j2 dest=/etc/nginx/snippets/ssl-params.conf
+  notify: restart nginx
+
+- name: Copying Nginx self signed config file
+  template: src=self-signed.conf.j2 dest=/etc/nginx/snippets/self-signed.conf
+  notify: restart nginx
+
+- name: Copying Dhparam file
+  template: src=dhparam.pem.j2 dest=/etc/nginx/dhparam.pem
+  notify: restart nginx
+
+  #- name: Adding permissive access
+  #command: semanage permissive -a httpd_t
+
+- name: Enable nginx to be started at boot
+  service: name=nginx state=started

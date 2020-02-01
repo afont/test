@@ -1,0 +1,31 @@
+---
+# defaults file for ansible-role-ca
+#
+# ca_force_create & ca_force_certify_nodes are designed to prevent overiding of existing certificates !
+
+#ca_force_create:
+ca_force_certify_nodes: true
+ca_defult_ssl_certs_dir: "{{ pki_cert_dir | d('/etc/ssl/certs') }}"
+ca_defult_ssl_key_dir: "{{ pki_key_dir | d('/etc/ssl/private') }}"
+
+# how long should remain before we generate a new CA cert ?
+ca_cert_expiration_panic_threshold: 604800 # 1 week
+
+# where to generate the certs
+ca_certs_dir: /usr/share/ca-certs
+
+# where to copy the produces files to
+ca_distribution_certs_dir: "{{ playbook_dir }}/../keys_and_certs"
+
+ca_rootca_password: RootCAP4ssw0rd!!
+ca_cert: ca.pem
+ca_key: ca-priv-key.pem
+
+ca_country: ES
+ca_state: Spain
+ca_locality: Barcelona
+ca_organization: Test 
+ca_domain: testdomain
+ca_organizationalunit: IT
+ca_commonname: testdomain.local
+ca_email: "ca-admin@testdomain.local"

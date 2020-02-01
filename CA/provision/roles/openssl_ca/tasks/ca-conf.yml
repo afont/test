@@ -1,0 +1,20 @@
+---
+
+- name: "create configuration directory"
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+  with_items:
+  - /usr/share/ca-certs 
+
+- name: "Deploy configuration items"
+  template:
+    src: "{{ item }}.j2"
+    dest: "/usr/share/ca-certs/{{ item }}"
+    owner: root
+    group: root
+  with_items:
+    - serial
+    - ca.conf

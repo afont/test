@@ -1,0 +1,2 @@
+[strongswan]
+strongswan ansible_ssh_host=10.0.16.50

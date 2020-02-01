@@ -1,0 +1,18 @@
+Vagrant.configure(2) do |config|
+
+  config.vm.define "ca" do |ca|
+      ca.vm.network "private_network", ip:"10.0.26.50"
+      ca.vm.hostname = "opensslca"
+      ca.vm.box = "bento/ubuntu-18.04"
+      ca.vm.synced_folder ".", "/vagrant", disabled: true
+      ca.vm.box_check_update = false
+      ca.vm.provider "virtualbox" do |vb|
+        vb.memory = "1024"
+        vb.name = "opensslca"
+      end
+      ca.vm.provision "shell", inline: "service networking restart"
+      ca.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+      ca.vm.provision "file", source: "provision", destination: "/home/vagrant/"
+      ca.vm.provision "shell", path: "shell/ansible-setup.sh"
+  end
+end

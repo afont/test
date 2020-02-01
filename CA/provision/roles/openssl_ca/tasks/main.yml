@@ -1,0 +1,30 @@
+---
+
+- name: "set ca_subject var"
+  set_fact:
+    ca_subject: '/CN={{ ca_commonname }}'
+  when: ca_subject is not defined
+
+- debug: var=ca_subject
+
+- include: ca-validations.yml
+  when: (ca_force_create is undefined) and (inventory_hostname == hostvars[groups['infra-instances'][0]]['inventory_hostname'])
+
+- include: ca-conf.yml
+  when: ca_init is defined and ca_force_create == true
+
+- include: ca-init.yml
+  when: ca_init is defined and ca_force_create == true
+
+- include: ca-key_n_cert.yml
+  when: ca_init is defined and ca_force_create == true
+
+- include: certify_nodes.yml
+  when: ca_certify_nodes is defined and ca_force_certify_nodes == true
+
+- include: fetch_keys.yml
+  when: ca_fetch_keys is defined
+
+  #- include: distribute_keys.yml
+  #when: ca_distribute_keys is defined
+

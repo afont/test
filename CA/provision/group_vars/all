@@ -1,0 +1,14 @@
+---
+# file: group_vars/all
+ansible_connection: ssh
+ansible_ssh_user: vagrant
+ansible_ssh_pass: vagrant
+pki_cert_dir: /etc/ssl/certs
+pki_key_dir: /etc/ssl/private
+ca_subject: test
+ca_certs_dir: /usr/share/ca-certs
+
+#Adapt accordingly to your CWD:
+webha_distribution_certs_dir: ~/test/webha/provision/roles/nginx/templates
+ss_distribution_certs_dir: ~/test/strongswan/provision/roles/strongswan/templates
+

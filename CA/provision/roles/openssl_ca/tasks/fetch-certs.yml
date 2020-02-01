@@ -1,0 +1,19 @@
+- name: "copy keys from infra to ansible machine for distribution"
+  fetch: src="{{ ca_certs_dir }}/{{ item.ssl_key }}" dest="{{ ca_distribution_certs_dir }}/{{ item.ssl_key }}" flat=yes
+  with_items:
+  - "{{ hosts.webha.web1 }}"
+  - "{{ hosts.webha.web2 }}"
+  - "{{ hosts.strongswan.strongswan }}"
+
+- name: "copy certs from infra to ansible machine for distribution"
+  fetch: src="{{ ca_certs_dir }}/{{ item.ssl_cert }}" dest="{{ ca_distribution_certs_dir }}/{{ item.ssl_cert }}" flat=yes
+  with_items:
+  - "{{ hosts.webha.web1 }}"
+  - "{{ hosts.webha.web2 }}"
+  - "{{ hosts.strongswan.strongswan }}"
+
+- name: "copy ca.pem ca-priv-key.pem"
+  fetch: src="{{ ca_certs_dir }}/{{ item }}" dest="{{ ca_distribution_certs_dir }}/{{ item }}" flat=yes
+  with_items:
+  - "{{ ca_cert }}"
+  - "{{ ca_key }}"

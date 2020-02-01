@@ -1,0 +1,13 @@
+- hosts: openssl_ca
+  user: root
+  become: true
+  become_user: root
+  roles:
+   - openssl_ca
+  vars:
+   ca_init: true
+   ca_certify_nodes: true
+   ca_fetch_keys: true
+   ca_force_create: true
+   ca_force_certify_nodes: true
+

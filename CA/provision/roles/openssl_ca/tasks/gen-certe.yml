@@ -1,0 +1,39 @@
+- name: "Ensures {{ ca_defult_ssl_certs_dir }} and {{ ca_defult_ssl_key_dir }} dirs exist"
+  file: path="{{ item }}" state=directory owner=root group=root mode=0750 recurse=yes
+  with_items:
+  - "{{ ca_defult_ssl_certs_dir }}"
+  - "{{ ca_defult_ssl_key_dir }}"
+
+- block:
+
+   - name: "copy keys from infra to ansible machine for distribution"
+     copy: src="{{ ca_distribution_certs_dir }}/{{ item.ssl_key }}" dest="{{ ca_defult_ssl_key_dir }}/{{ item.ssl_key }}"
+     with_items:
+          - "{{ hosts.webha.web1 }}"
+          - "{{ hosts.webha.web2 }}"
+          - "{{ hosts.strongswan.strongswan }}"
+
+   - name: "copy certs from infra to ansible machine for distribution"
+     copy: src="{{ ca_distribution_certs_dir }}/{{ item.ssl_cert }}" dest="{{ ca_defult_ssl_certs_dir }}/{{ item.ssl_cert }}"
+     with_items:
+          - "{{ hosts.webha.web1 }}"
+          - "{{ hosts.webha.web2 }}"
+          - "{{ hosts.strongswan.strongswan }}"
+
+ when: inventory_hostname == "{{ item.cname }}"
+
+# Root CA key/cert
+
+- name: "copy {{ ca_key }} to {{ ca_defult_ssl_key_dir }}"
+  copy:
+   src: "{{ ca_distribution_certs_dir }}/{{ item }}"
+   dest: "{{ ca_defult_ssl_key_dir }}/{{ item }}"
+  with_items:
+  - "{{ ca_key }}"
+
+- name: "copy {{ ca_cert }} to {{ ca_defult_ssl_certs_dir }}"
+  copy:
+   src: "{{ ca_distribution_certs_dir }}/{{ item }}"
+   dest: "{{ ca_defult_ssl_certs_dir }}/{{ item }}"
+  with_items:
+  - "{{ ca_cert }}"

@@ -1,0 +1,12 @@
+--- # tasks file for ansible-role-ca
+include: ca-init.yml
+when: ca_init is defined and ca_force_create == true
+
+include: certify_nodes.yml
+when: ca_certify_nodes is defined and ca_force_certify_nodes
+
+include: fetch_keys.yml
+when: ca_fetch_keys is defined
+
+#include: distribute_keys.yml
+#when: ca_distribute_keys is defined
