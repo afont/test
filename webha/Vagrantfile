@@ -15,6 +15,7 @@ Vagrant.configure(2) do |config|
       node.vm.provision "shell", inline: "service networking restart"
       node.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
       node.vm.provision "file", source: "provision", destination: "/home/vagrant/"
+      node.vm.provision "shell", path: "shell/ansible-setup.sh"
     end
   end
 
@@ -33,7 +34,7 @@ Vagrant.configure(2) do |config|
       app.vm.provision "shell", inline: "service networking restart"
       app.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
       app.vm.provision "file", source: "provision", destination: "/home/vagrant/"
-
+      app.vm.provision "shell", path: "shell/ansible-setup.sh"
   end
 end
 
