@@ -25,17 +25,33 @@
     owner: root
     group: root
   with_items:
-  - serial
-  - ca.conf
+          - serial
+          - ca.conf
+
+- name: "Generate private key"
+  shell: 'openssl genrsa -out {{ ca_key }} 2048'
+  args:
+    chdir: "{{ ca_certs_dir }}"
 
 - name: "Config CA"
   set_fact:
-    ca_subject: '/C={{ ca_country }}/ST={{ ca_state }}/L={{ ca_locality }}/O={{ ca_organization }}/OU={{ ca_organizationalunit }}/CN={{ ca_commonname }}/emailAddress={{ ca_email }}'
+    ca_subject: '/C=ES/ST=Spain/L=Barcelona/O=Test/OU=IT/CN=ca/emailAddress=ca-admin@ca'
 
-- name: "Generate private key && Create root CA files"
-  shell: "{{ item }}"
+
+- name: "Create root CA files"
+  shell: 'openssl req -new -x509 -key {{ ca_key }} -out {{ ca_cert }} -subj "{{ ca_subject }}"'
   args:
     chdir: "{{ ca_certs_dir }}"
-  with_items:
-  - "openssl genrsa -out {{ ca_key }} 2048"
-  - "openssl req -config /usr/lib/ssl/openssl.cnf -new -key {{ ca_key }} -x509 -days 1825 -out {{ ca_cert }} -passin pass:{{ ca_rootca_password }} -subj \"{{ ca_subject }}\""
+
+- name: "Generate CSR for the CA"
+  shell: 'openssl req -subj "{{ ca_subject }}" -new -key "{{ ca_key }}" -out "{{ item }}".csr'
+  args:
+    chdir: "{{ ca_certs_dir }}"
+  with_inventory_hostnames: cag
+
+- name: "Generate certificate and sign it by the CA"
+  shell: 'openssl x509 -req -days 1825 -in "{{ item }}".csr -CA {{ ca_cert }} -CAkey {{ ca_key }} -CAcreateserial -out "{{ item }}"-cert.pem -extensions v3_req -extfile /usr/lib/ssl/openssl.cnf'
+  args:
+   chdir: "{{ ca_certs_dir }}"
+  with_inventory_hostnames: cag
+

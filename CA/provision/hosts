@@ -1,5 +1,5 @@
-[opensslca_group]
-openssl_ca  ansible_ssh_host=10.0.26.50
+[cag]
+ca  ansible_ssh_host=10.0.26.50
 
 [webha]
 web1

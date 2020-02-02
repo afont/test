@@ -8,17 +8,50 @@
     group: root
     mode: 0755
 
+- name: "Generate Certs for strongswan server"
+  shell: 'openssl genrsa -out {{ item }}-key.pem 2048'
+  args:
+    chdir: "{{ ca_certs_dir }}"
+  with_inventory_hostnames: strongswang
+       
+- name: "Generate cert request for strongswan"
+  shell: 'openssl req -subj "/C=ES/ST=Spain/L=Barcelona/O=Test/OU=IT/CN="{{ item }}"/emailAddress=ca-admin@"{{ item }}"" -new -key "{{ item }}"-key.pem -out "{{ item }}".csr'
+  args:
+    chdir: "{{ ca_certs_dir }}"
+  with_inventory_hostnames: strongswang
+
+- name: "Generate the CA trusted certificate for strongswan"
+  shell: 'sudo openssl x509 -req -days 1825 -in "{{ item }}".csr -CA ca.pem -CAkey ca-priv-key.pem -CAcreateserial -out "{{ item }}"-cert.pem -extensions v3_req -extfile /usr/lib/ssl/openssl.cnf'
+  args:
+   chdir: "{{ ca_certs_dir }}"
+  with_inventory_hostnames: strongswang
+
+
 - name: "Generate Certs and keys for Webservers"
   shell: 'openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "{{ item }}".key -out "{{ item }}".crt -subj "/C=ES/ST=Spain/L=Barcelona/O=Test/OU=IT/CN="{{ item }}"/emailAddress=ca-admin@"{{ item }}""'
   args:
     chdir: "{{ ca_certs_dir }}"
   with_inventory_hostnames: webha 
 
-- name: "Generate Certs and keys for Strongswan IKEv2"
-  shell: 'openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "{{ item }}"-key.pem -out "{{ item }}"-cert.pem -subj "/C=ES/ST=Spain/L=Barcelona/O=Test/OU=IT/CN="{{ item }}"/emailAddress=ca-admin@"{{ item }}""'
+
+- name: "Generate Certs for nginx servers"
+  shell: 'openssl genrsa -out {{ item }}.key 2048'
   args:
     chdir: "{{ ca_certs_dir }}"
-  with_inventory_hostnames: strongswang
+  with_inventory_hostnames: webha
+
+- name: "Generate cert request for nginx servers"
+  shell: 'openssl req -subj "/C=ES/ST=Spain/L=Barcelona/O=Test/OU=IT/CN="{{ item }}"/emailAddress=ca-admin@"{{ item }}"" -new -key "{{ item }}".key -out "{{ item }}".csr'
+  args:
+    chdir: "{{ ca_certs_dir }}"
+  with_inventory_hostnames: webha
+
+- name: "Generate the CA trusted certificates for nginx servers"
+  shell: 'sudo openssl x509 -req -days 1825 -in "{{ item }}".csr -CA ca.pem -CAkey ca-priv-key.pem -CAcreateserial -out "{{ item }}".crt -extensions v3_req -extfile /usr/lib/ssl/openssl.cnf'
+  args:
+   chdir: "{{ ca_certs_dir }}"
+  with_inventory_hostnames: webha
+
 
 - name: "Generate DH param... (please wait)"
   shell: 'openssl dhparam -out dhparam.pem 1024'
