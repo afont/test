@@ -1,6 +1,6 @@
 #!/bin/bash
 
-apt install ansible -y
+apt install ansible sshpass -y
 
 cd /home/vagrant/provision
 ansible-playbook playbooks/environment.yml
